@@ -30,7 +30,7 @@ var Body = React.createClass({
     this.setState({ skills: newSkills });
   },
 
-  handleEdit() {
+  handleEdit(id) {
     console.log('you are in an edit!');
   },
 
@@ -38,7 +38,11 @@ var Body = React.createClass({
     return (
       <div>
         <NewSkill handleSubmit={this.handleSubmit} />
-        <AllSkills skills={this.state.skills} handleDelete={this.handleDelete} />
+        <AllSkills 
+          skills={this.state.skills} 
+          handleDelete={this.handleDelete} 
+          handleEdit={this.handleEdit} 
+        />
       </div>
     )
   }
