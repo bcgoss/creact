@@ -16,13 +16,32 @@ var Skill = React.createClass({
 
   onUpdate() {
     if (this.state.editable) {
+      var id = this.props.skill.id;
       var name = this.state.name;
       var details = this.state.details;
-      var skill = { name: name, details: details }
+      var level = this.props.skill.level;
+      var skill = {id: id, name: name, details: details, level: level}
 
       this.props.handleUpdate(skill);
+console.log(skill)
     }
     this.setState({ editable: !this.state.editable })
+  },
+
+  handleLevelChange(action) {
+    var levels = ['bad', 'halfbad', 'fantastic'];
+    var name = this.props.skill.name;
+    var details = this.props.skill.details;
+    var level = this.props.skill.level;
+    var index = levels.indexOf(level);
+
+    if (action === 'up' && index < 2) {
+      var newLevel = levels[index + 1];
+      this.props.handleUpdate({id: this.props.skill.id, name: name, details: details, level: newLevel})
+    } else if (action === 'down' && index > 0) {
+      var newLevel = levels[index - 1];
+      this.props.handleUpdate({id: this.props.skill.id, name: name, details: details, level: newLevel})
+    }
   },
 
   render() {
@@ -33,15 +52,26 @@ var Skill = React.createClass({
                                    : <h3>{this.props.skill.name}</h3>
 
     var details = this.state.editable ? <textarea type='text' 
-                                                  defaultValue={this.props.skill.details}>
-                                                  onChange{ (e) => this.setState({details: e.target.value}) }
-                                        </textarea>
+                                                  onChange={ (e) => this.setState({details: e.target.value}) }
+                                                  defaultValue={this.props.skill.details}/>
                                       : <p>{this.props.skill.details}</p>
 
     return (
       <div>
         {name}
-        <p><strong>Level:</strong> {this.props.skill.level}</p>
+        <div className='skill-level'>
+          <button type='button' 
+                  className='btn btn-default btn-sm'
+                  onClick={this.handleLevelChange.bind(this, 'down')}>
+            <span className='glyphicon glyphicon-triangle-bottom'></span>
+          </button>
+          <p><strong>Level:</strong> {this.props.skill.level}</p>
+          <button type='button' 
+                  className='btn btn-default btn-sm'
+                  onClick={this.handleLevelChange.bind(this, 'up')}>
+            <span className='glyphicon glyphicon-triangle-top'></span>
+          </button>
+        </div>
         {details}
 
         <button onClick={this.props.handleDelete}>
