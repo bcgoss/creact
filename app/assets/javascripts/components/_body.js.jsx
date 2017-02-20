@@ -52,6 +52,7 @@ var Body = React.createClass({
     return (
       <div>
         <NewSkill handleSubmit={this.handleSubmit} />
+        <SelectFilter />
         <AllSkills
           skills={this.state.skills}
           handleDelete={this.handleDelete}

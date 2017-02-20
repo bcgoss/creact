@@ -14,4 +14,4 @@ var SelectFilter = React.createClass({
       </div>
     )
   }
-}
+});
