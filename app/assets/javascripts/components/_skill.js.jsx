@@ -1,57 +1,62 @@
 var Skill = React.createClass({
   getInitialState() {
     return { details: '', editable: false, name: ''}
-  }, 
+  },
 
   handleEdit() {
     if (this.state.editable) {
       var name = this.state.name;
       var details = this.state.details;
-      console.log('in handleEdit', this.state.editable, name, details);
+
       this.onUpdate();
     }
     this.setState({ editable: !this.state.editable })
 
-  }, 
+  },
 
   onUpdate() {
     if (this.state.editable) {
-      var id = this.props.skill.id;
-      var name = this.state.name;
-      var details = this.state.details;
-      var level = this.props.skill.level;
-      var skill = {id: id, name: name, details: details, level: level}
+      var skill = { id: this.props.skill.id,
+                    name: this.state.name,
+                    details: this.state.details,
+                    level: this.props.skill.level }
 
+console.log(skill);
       this.props.handleUpdate(skill);
-console.log(skill)
     }
-    this.setState({ editable: !this.state.editable })
   },
 
-  handleLevelChange(action) {
-    var levels = ['bad', 'halfbad', 'fantastic'];
-    var name = this.props.skill.name;
-    var details = this.props.skill.details;
+  handleUpdateLevel(action) {
     var level = this.props.skill.level;
-    var index = levels.indexOf(level);
+    var newLevel = this.getNewLevel(action, level)
+    var skill = { id: this.props.skill.id, level: newLevel }
+console.log(skill)
+    this.props.handleUpdate(skill);
+  },
 
-    if (action === 'up' && index < 2) {
-      var newLevel = levels[index + 1];
-      this.props.handleUpdate({id: this.props.skill.id, name: name, details: details, level: newLevel})
-    } else if (action === 'down' && index > 0) {
-      var newLevel = levels[index - 1];
-      this.props.handleUpdate({id: this.props.skill.id, name: name, details: details, level: newLevel})
+  levelCanBeChanged(action, level) {
+    return action === 'up' && level < 2 || action === 'down' && level > 0;
+  },
+
+  getNewLevel(action, oldLevel) {
+    var levels = ['bad', 'halfbad', 'fantastic'];
+    var index = levels.indexOf(oldLevel);
+    var change = action === 'up' ? 1 : -1;
+    if (this.levelCanBeChanged(action, index)) {
+      return levels[index + change]
+    } else {
+      return oldLevel
     }
   },
 
   render() {
-    var name = this.state.editable ? <input type='text' 
+    var name = this.state.editable ? <input type='text'
                                             defaultValue={this.props.skill.name}
                                             onChange={ (e) => this.setState({ name: e.target.value }) }
                                      />
                                    : <h3>{this.props.skill.name}</h3>
 
-    var details = this.state.editable ? <textarea type='text' 
+    var details = this.state.editable ? <textarea type='text'
                                                   onChange={ (e) => this.setState({details: e.target.value}) }
                                                   defaultValue={this.props.skill.details}/>
                                       : <p>{this.props.skill.details}</p>
@@ -60,15 +65,15 @@ console.log(skill)
       <div>
         {name}
         <div className='skill-level'>
-          <button type='button' 
+          <button type='button'
                   className='btn btn-default btn-sm'
-                  onClick={this.handleLevelChange.bind(this, 'down')}>
+                  onClick={this.handleUpdateLevel.bind(this, 'down')}>
             <span className='glyphicon glyphicon-triangle-bottom'></span>
           </button>
           <p><strong>Level:</strong> {this.props.skill.level}</p>
-          <button type='button' 
+          <button type='button'
                   className='btn btn-default btn-sm'
-                  onClick={this.handleLevelChange.bind(this, 'up')}>
+                  onClick={this.handleUpdateLevel.bind(this, 'up')}>
             <span className='glyphicon glyphicon-triangle-top'></span>
           </button>
         </div>
