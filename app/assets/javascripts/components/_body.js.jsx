@@ -1,6 +1,6 @@
 var Body = React.createClass({
   getInitialState() {
-    return { skills: [] }
+    return { skills: [], filteredSkills: null }
   },
 
   componentDidMount() {
@@ -48,13 +48,21 @@ var Body = React.createClass({
     this.setState({ skills: skills });
   },
 
+  filterSkillsByLevel(level){
+    let newSkills = null;
+    if(level != 'all') {
+      newSkills = this.state.skills.filter(skill => skill.level === level);
+    }
+    this.setState({filteredSkills: newSkills});
+  },
+
   render() {
     return (
       <div>
         <NewSkill handleSubmit={this.handleSubmit} />
-        <SelectFilter />
+        <SelectFilter handleFilter={this.filterSkillsByLevel} />
         <AllSkills
-          skills={this.state.skills}
+          skills={this.state.filteredSkills || this.state.skills}
           handleDelete={this.handleDelete}
           handleUpdate={this.handleUpdate}
         />
